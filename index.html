@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Cestne prohlaseni</title>
+    <script async defer data-domain="cestne.prohlasuji.cz" src="https://plausible.io/js/plausible.js"></script>
+    <title>Čestné prohlášení</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.6.5/core.min.js" integrity="sha256-mmU2yAEP5IKCRWRxZEA+e2oGOdfyJGQV+55ZFTLahW8=" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&amp;subset=latin-ext" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
@@ -17,7 +18,6 @@
     <script src="assets/vuejs-datepicker-patched.min.js"></script>
     <script src="assets/vuejs-auto-complete-0.10.0-min.js"></script>
     <script src="assets/lang-cs.js"></script>
-    <script src="assets/citycouncils_alt.min.js"></script> <!-- city councils (alternate, new version) -->
     <script src="assets/cityzipname.min.js"></script> <!-- cities with zip for zip lookup -->
     <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js" identity="sha384-QliZbpszoo4jiVyo529dYiKgGQySM0I/kSJcvQcVkMXCqiIoEfRQLsvUwVNLcOqP" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.min.js" integrity="sha384-tJs0vlPyuG7XcysSkZ0VtWsM/uztJkUtpLwb6HzV5NSgSwGqdW61IBOBJDhbUf+K" crossorigin="anonymous"></script>
@@ -26,6 +26,9 @@
 </head>
 
 <body class="new-body">
+    <div class="header__navbar">
+        <h1>Čestné prohlášení</h1>
+    </div>
     <div id="app">
         <div class="body container">
             <div id="form" class="form pane table" v-if="$route.path=='/form'">
@@ -63,7 +66,14 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
                                 <label for="reason" class="required">Důvod cesty:</label>
-                                <input id="reason" v-model="userData.reason" class="form-control" type="text">
+                                <!-- <input id="reason" v-model="userData.reason" class="form-control" type="text"> -->
+                                <autocomplete :source="allowedReasons" :input-class="'form-control'" 
+                                :show-no-results="false" placeholder="" results-display="r" 
+                                results-value="r" results-display-after-item-selected="r" 
+                                search-from-beginning="true" allow-only-values-from-source="false" 
+                                min-legth-for-search-begin="0" min-result-items="13" max-result-items="15" more-results-exists-text="(...upřesněte zadání...)" 
+                                ref="autocompleteReason" @selected="reasonSelected">
+                                </autocomplete>
                             </div>
                         </div>
                         <div class="row">
@@ -186,12 +196,28 @@ uvede se jen místo aktuálního pobytu.</p>
         const date = moment(dateString);
         return date.isValid() ? date.format('D. M. YYYY') : "";
     });
+    const allowedReasons=[
+        {r:"cesta do zdravotnických zařízení a zařízení sociálních služeb, včetně zajištění nezbytného doprovodu, nebo do zařízení veterinární péče"},
+        {r:"zajištění nezbytných potřeb pro jinou osobu, zajištění péče o děti, zajištění péče o zvířata, odkládání odpadu"},
+        {r:"vyřízení neodkladných úředních záležitostí, včetně zajištění nezbytného doprovodu"},
+        {r:"výkon povolání"},
+        {r:"zajištění bezpečnosti, vnitřního pořádku a řešení krizové situace"},
+        {r:"zajištění ochrany zdraví, poskytování zdravotní nebo sociální péče, včetně dobrovolnické činnosti"},
+        {r:"zajištění individuální duchovní péče a služby"},
+        {r:"zajištění veřejné hromadné dopravy a další infrastruktury,"},
+        {r:"zajištění služeb pro obyvatele, včetně zásobování a rozvážkové služby"},
+        {r:"zajištění veterinární péče"},
+        {r:"účast na pohřbu"},
+        {r:"vzdělávání včetně praxe a zkoušek"},
+        {r:"účast na hromadné akci"},
+        {r:"vycestování z České republiky"},
+    ]
     window.app = new Vue({
         router: router,
         el: '#app',
         data: {
-            cities: cities,
             citiesZipName: citiesZipName,
+            allowedReasons: allowedReasons,
             cs: window.csLang,
             routes: routes,
             overlayVisible: false,
@@ -228,36 +254,6 @@ uvede se jen místo aktuálního pobytu.</p>
 
                 var selectedCity;
 
-                if (typeof result.selectedObject.town_district_code !== undefined && result.selectedObject.town_district_code != null && typeof result.selectedObject.city_code !== undefined && result.selectedObject.city_code != null) {
-                    selectedCity = cities.find(function(cities) { return cities.town_district_code == result.selectedObject.town_district_code && cities.city_code == result.selectedObject.city_code; });
-                }
-                if (typeof selectedCity == 'undefined' && typeof result.selectedObject.town_district_code !== undefined && result.selectedObject.town_district_code != null) {
-                    selectedCity = cities.find(function(cities) { return cities.town_district_code == result.selectedObject.town_district_code; });
-                }
-                if (typeof selectedCity == 'undefined' && typeof result.selectedObject.city_code !== undefined && result.selectedObject.city_code != null) {
-                    selectedCity = cities.find(function(cities) { return cities.city_code == result.selectedObject.city_code; });
-                }
-                if (typeof selectedCity == 'undefined' && typeof result.selectedObject.zip !== undefined && result.selectedObject.zip != null) {
-                    selectedCity = cities.find(function(cities) { return cities.zip == result.selectedObject.zip; });
-                }
-
-                if (typeof selectedCity !== 'undefined') {
-                    this.userData.municipality.city = selectedCity.city;
-                    this.userData.municipality.postalCode = selectedCity.zip;
-                    this.userData.municipality.name = selectedCity.name;
-                    this.userData.municipality.addressLine1 = (selectedCity.street ? selectedCity.street : selectedCity.city) + ' ' + selectedCity.houseNumber;
-                    this.userData.municipality.databox = selectedCity.databox;
-                } else { // not found - clearing values and only set known values (from search condition)
-                    this.userData.municipality.city = result.selectedObject.name;
-                    this.userData.municipality.postalCode = result.selectedObject.zip;
-
-                    this.userData.municipality.name = '';
-                    this.userData.municipality.addressLine1 = '';
-                    this.userData.municipality.databox = '';
-                }
-            },
-            birthdateSelected: function(result) {
-                // this.userData.birthdate = result;
             },
             csDateFormat: function(date) {
                 return moment(date).format('D. M. YYYY');
@@ -289,6 +285,12 @@ uvede se jen místo aktuálního pobytu.</p>
             },
             showOverlay: function() {
                 this.overlayVisible = !this.overlayVisible;
+            },
+            reasonSelected: function(result) {
+                if (typeof result.selectedObject.r !== undefined) {
+                    this.userData.reason = result.selectedObject.r
+                }
+                
             },
             downloadPdf: function() {
                 var element = document.getElementById('document-to-print-cr');
