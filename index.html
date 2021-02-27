@@ -82,6 +82,19 @@
                                 <input id="target" v-model="userData.target" class="form-control" type="text">
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10">
+                                <label for="day" class="required">Den cesty:</label>
+                                <input id="day" v-model="travelData.day" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10">
+                                <label for="time" class="required">Čas cesty:</label>
+                                <input id="time" v-model="travelData.time" class="form-control" type="text">
+                            </div>
+                        </div>
+
                     </div>
                 </div>
                 <div class="form-group">
@@ -163,8 +176,8 @@
                 </p>
                 <p style="padding: 20px 5px 10px 5px;">
                     Podepsáno<br>
-                    <strong>Den:</strong> ……………………………..<br>
-                    <strong>Hodina:</strong> ……………………………..<br>
+                    <strong>Den:</strong> {{travelData.day}}<br>
+                    <strong>Hodina:</strong> {{travelData.time}}<br><br>
                     <strong>Podpis:</strong> ……………………………..<br>
                 </p>
                 <p>
@@ -212,6 +225,8 @@ uvede se jen místo aktuálního pobytu.</p>
         {r:"účast na hromadné akci"},
         {r:"vycestování z České republiky"},
     ]
+    currentTime= new Date()
+    currentTime = new Date(currentTime - 30*60000)
     window.app = new Vue({
         router: router,
         el: '#app',
@@ -230,6 +245,10 @@ uvede se jen místo aktuálního pobytu.</p>
                 reson: null,
                 target: null,
             },
+            travelData: {
+                day: currentTime.getDate() + "." + currentTime.getMonth() + "." + currentTime.getFullYear(),
+                time: currentTime.getHours() + ":" + currentTime.getMinutes(),
+            },
             validatiors: {
                 fullName: { pattern: /^.{2,}\ .{2,}$/ },
                 line1: { pattern: /^(.*[^0-9]+) (([1-9][0-9]*)\/)?([1-9][0-9]*[a-cA-C]?)$/ },
@@ -241,19 +260,6 @@ uvede se jen místo aktuálního pobytu.</p>
             zipSelected: function(result) {
                 this.userData.city = result.selectedObject.name;
                 this.userData.postalCode = result.selectedObject.zip;
-
-                /*
-                 * search priority:
-                 * 1) town_district_code && city_code
-                 * 2) town_district_code
-                 * 3) city_code
-                 * 4) zip
-                 *
-                 * multiple "flat if" (not nested) is for better readability
-                 */
-
-                var selectedCity;
-
             },
             csDateFormat: function(date) {
                 return moment(date).format('D. M. YYYY');
@@ -310,6 +316,8 @@ uvede se jen místo aktuálního pobytu.</p>
                     this.userData.target = null;
                     this.userData.reason = null;
                     this.userData.idnumber = null;
+                    this.travelData.day = null;
+                    this.travelData.time = null;
                     this.$refs.autocompleteZIP.clear();
                 }
             },
@@ -631,7 +639,7 @@ uvede se jen místo aktuálního pobytu.</p>
         <div class="container">
             <ul class="list-inline">
             </ul>
-            <p>footer
+            <p>S láskou od <a href="https://twitter.com/zajdee">@zajdee</a> a <a href="https://twitter.com/mojzis">@mojzis</a>, s využitím <a href="https://volby.hlidacstatu.cz/">Voličského lístku</a> od Hlídače Státu.
             </p>
         </div>
     </footer>
