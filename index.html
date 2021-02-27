@@ -1,0 +1,638 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Cestne prohlaseni</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.6.5/core.min.js" integrity="sha256-mmU2yAEP5IKCRWRxZEA+e2oGOdfyJGQV+55ZFTLahW8=" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&amp;subset=latin-ext" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="assets/site.css" rel="stylesheet">
+    <link href="assets/globalsite.css" rel="stylesheet">
+    <link href="assets/social-share-kit.css" rel="stylesheet">
+    <link href="assets/hlidac.css" rel="stylesheet">
+    <script src="assets/vuejs-datepicker-patched.min.js"></script>
+    <script src="assets/vuejs-auto-complete-0.10.0-min.js"></script>
+    <script src="assets/lang-cs.js"></script>
+    <script src="assets/citycouncils_alt.min.js"></script> <!-- city councils (alternate, new version) -->
+    <script src="assets/cityzipname.min.js"></script> <!-- cities with zip for zip lookup -->
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js" identity="sha384-QliZbpszoo4jiVyo529dYiKgGQySM0I/kSJcvQcVkMXCqiIoEfRQLsvUwVNLcOqP" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.min.js" integrity="sha384-tJs0vlPyuG7XcysSkZ0VtWsM/uztJkUtpLwb6HzV5NSgSwGqdW61IBOBJDhbUf+K" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.2/dist/vue-router.min.js" integrity="sha384-EnzMJi5PirMz1dgUr9a4DUHwg7e71+fxk3jLLfJn1vljGydxX8c6bdDYdPDE8224" crossorigin="anonymous"></script>
+    <script src="assets/html2pdf.bundle.min.js"></script>
+</head>
+
+<body class="new-body">
+    <div id="app">
+        <div class="body container">
+            <div id="form" class="form pane table" v-if="$route.path=='/form'">
+                <div class="form-group">
+                    <div class="left">
+                        <img src="assets/images/lock.png" width="41" height="50" />
+                    </div>
+                    <h2>Soukromí</h2>
+                    <div class="right">
+                        <p class="new-p">
+                            Vámi vyplněné osobní údaje nikomu neodesíláme, ani je dále nezpracováváme.
+                            Nemusíte se ničeho bát – celá žádost vzniká pouze na vašem počítači.
+                            Pokud chcete mít 100% jistotu, můžete se při vytváření prohlášení odpojit od internetu.
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="left">
+                        <img src="assets/images/id-card.png" width="50" height="38" class="idcard" />
+                    </div>
+                    <h2>Moje identita</h2>
+                    <div class="right">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10" :class="validate('fullName',userData.fullName)">
+                                <label for="name" class="required">Jméno a příjmení</label>
+                                <input id="name" v-model="userData.fullName" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10">
+                                <label for="idnumber" class="required">Číslo občanského průkazu, příp. cestovního dokladu:</label>
+                                <input id="idnumber" v-model="userData.idnumber" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10">
+                                <label for="reason" class="required">Důvod cesty:</label>
+                                <input id="reason" v-model="userData.reason" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10">
+                                <label for="target" class="required">Cíl cesty:</label>
+                                <input id="target" v-model="userData.target" class="form-control" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="left">
+                        <img src="assets/images/home.png" width="50" height="40" />
+                    </div>
+                    <h2>Moje adresa</h2>
+                    <div class="right">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10" :class="validate('line1',userData.addressLine1)">
+                                <label for="address-line1">Ulice a číslo popisné</label>
+                                <input id="address-line1" v-model="userData.addressLine1" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-3" :class="validate('postalCode',userData.postalCode)">
+                                <label for="postal-code">PSČ</label>
+                                <autocomplete :source="citiesZipName" :input-class="'form-control'" :show-no-results="false" placeholder="" results-display="zip_name" results-value="zip" results-display-after-item-selected="zip" search-from-beginning="true" allow-only-values-from-source="false" min-legth-for-search-begin="0" max-result-items="15" more-results-exists-text="(...upřesněte zadání...)" ref="autocompleteZIP" @selected="zipSelected">
+                                </autocomplete>
+                            </div>
+                            <div class="col-xs-12 col-sm-7" :class="validate('locality',userData.city)">
+                                <label for="locality">Obec</label>
+                                <input id="locality" v-model="userData.city" class="form-control" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="right row">
+                    <router-link tag="button" to="/preview" class="btn btn-primary btn-primary-new col-xs-12 col-sm-4">Vytvořit žádost</router-link>
+                    <button class="btn btn-default btn-default-new col-xs-12 col-sm-4" v-on:click="clearForm('Opravdu si přejete smazat obsah formuláře?', false)">Smazat údaje</button>
+                </div>
+            </div>
+            <transition v-on:after-enter="generatePreview">
+                <div id="preview" class="pane" v-if="$route.path=='/preview'">
+                    <h2>1. Zkontrolujte prohlášení</h2>
+                    <div class="row clearfix">
+                        <div class="left col-xs-12 col-sm-6">
+                            <p>Zkontrolujte si údaje v náhledu vygenerovaného prohlášení.</p>
+                            <p>V případě, že se vám náhled nezobrazuje, proveďte kontrolu po stažení.</p>
+                        </div>
+                        <div class="preview-wrapper col-xs-12 col-sm-5" @click="showOverlay"><img></div>
+                        <div class="left col-xs-12 col-sm-6">
+                            <p>Pokud jsou všechny údaje v pořádku, prohlášení si stáhněte.</p>
+                            <p>Pokud není některá z vyplněných informací správná, nic se neděje. Údaje můžete snadno změnit.</p>
+                            <div class="preview-buttons row clearfix">
+                                <button class="btn btn-primary btn-primary-new pull-left col-xs-12 col-sm-5" v-on:click="downloadPdf">Stáhnout <br class="visible-sm-block">žádost</button>
+                                <router-link tag="button" to="/form" class="btn btn-default btn-default-new pull-right col-xs-12 col-sm-5">Změnit <br class="visible-sm-block">údaje</router-link>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </transition>
+        </div>
+        <div id="overlay" v-show="overlayVisible" @click="showOverlay"><img></div>
+        <div id="document-template">
+            <div id="document-to-print-cr" class="pageA4">
+                <p style="text-align: center; font-weight: bold; padding: 40px 5px 15px 5px;">
+                    ČESTNÉ PROHLÁŠENÍ
+                </p>
+                <p style="text-align: justify; padding: 15px 5px 20px 5px;">
+                    Já níže podepsaný/á
+                </p>
+                <p style="padding: 10px 5px 10px 5px;">
+                    <strong>Jméno a příjmení:</strong> {{userData.fullName}} <br>
+                    <strong>Adresa:</strong> {{userData.addressLine1 || ''}}<span v-if="userData.addressLine1">, </span>{{(userData.postalCode || '') +' '}}{{userData.city || ''}}<br>
+                    <strong>Číslo občanského průkazu, příp. cestovního dokladu:</strong> {{userData.idnumber}}
+                </p>
+                <p>
+                    uvádím následující důvod k opuštění místa trvalého pobytu nebo bydliště<sup>1)</sup> v souladu s usnesením vlády č. 216 ze dne 26. února 2021:
+                </p>
+                <p>
+                    {{userData.reason}}
+                </p>
+                <p>
+                    uvádím, že cestuji do místa:
+                </p>
+                <p>
+                    {{userData.target}}
+                </p>
+                <p style="padding: 20px 5px 10px 5px;">
+                    Podepsáno<br>
+                    <strong>Den:</strong> ……………………………..<br>
+                    <strong>Hodina:</strong> ……………………………..<br>
+                    <strong>Podpis:</strong> ……………………………..<br>
+                </p>
+                <p>
+<sup>1</sup>Pokud bylo místo trvalého pobytu nebo bydliště opuštěno před vyhlášením příslušného krizového opatření,
+uvede se jen místo aktuálního pobytu.</p>
+            </div>
+        </div>
+    </div>
+    <script>
+    const routes = [
+        { path: '/form' },
+        { path: '/preview' },
+        { path: '/en/form' },
+        { path: '/en/preview' }
+    ];
+    const paths = routes.map(function(route) { return route.path })
+    const router = new VueRouter({
+        routes: routes,
+        scrollBehavior: function(to, from, savedPosition) {
+            return { x: 0, y: 0 }
+        }
+    });
+    router.beforeEach(function(to, from, next) {
+        if (paths.indexOf(to.path) == -1) {
+            next({ path: '/form', replace: true });
+        } else next();
+    })
+    Vue.filter('dateCZ', function(dateString) {
+        const date = moment(dateString);
+        return date.isValid() ? date.format('D. M. YYYY') : "";
+    });
+    window.app = new Vue({
+        router: router,
+        el: '#app',
+        data: {
+            cities: cities,
+            citiesZipName: citiesZipName,
+            cs: window.csLang,
+            routes: routes,
+            overlayVisible: false,
+            userData: {
+                fullName: null,
+                addressLine1: null,
+                postalCode: null,
+                city: null,
+                idnumber: null,
+                reson: null,
+                target: null,
+            },
+            validatiors: {
+                fullName: { pattern: /^.{2,}\ .{2,}$/ },
+                line1: { pattern: /^(.*[^0-9]+) (([1-9][0-9]*)\/)?([1-9][0-9]*[a-cA-C]?)$/ },
+                postalCode: { pattern: /^[1-7][0-9]{4}$/ },
+                locality: { pattern: /^.{2,40}$/ },
+            }
+        },
+        methods: {
+            zipSelected: function(result) {
+                this.userData.city = result.selectedObject.name;
+                this.userData.postalCode = result.selectedObject.zip;
+
+                /*
+                 * search priority:
+                 * 1) town_district_code && city_code
+                 * 2) town_district_code
+                 * 3) city_code
+                 * 4) zip
+                 *
+                 * multiple "flat if" (not nested) is for better readability
+                 */
+
+                var selectedCity;
+
+                if (typeof result.selectedObject.town_district_code !== undefined && result.selectedObject.town_district_code != null && typeof result.selectedObject.city_code !== undefined && result.selectedObject.city_code != null) {
+                    selectedCity = cities.find(function(cities) { return cities.town_district_code == result.selectedObject.town_district_code && cities.city_code == result.selectedObject.city_code; });
+                }
+                if (typeof selectedCity == 'undefined' && typeof result.selectedObject.town_district_code !== undefined && result.selectedObject.town_district_code != null) {
+                    selectedCity = cities.find(function(cities) { return cities.town_district_code == result.selectedObject.town_district_code; });
+                }
+                if (typeof selectedCity == 'undefined' && typeof result.selectedObject.city_code !== undefined && result.selectedObject.city_code != null) {
+                    selectedCity = cities.find(function(cities) { return cities.city_code == result.selectedObject.city_code; });
+                }
+                if (typeof selectedCity == 'undefined' && typeof result.selectedObject.zip !== undefined && result.selectedObject.zip != null) {
+                    selectedCity = cities.find(function(cities) { return cities.zip == result.selectedObject.zip; });
+                }
+
+                if (typeof selectedCity !== 'undefined') {
+                    this.userData.municipality.city = selectedCity.city;
+                    this.userData.municipality.postalCode = selectedCity.zip;
+                    this.userData.municipality.name = selectedCity.name;
+                    this.userData.municipality.addressLine1 = (selectedCity.street ? selectedCity.street : selectedCity.city) + ' ' + selectedCity.houseNumber;
+                    this.userData.municipality.databox = selectedCity.databox;
+                } else { // not found - clearing values and only set known values (from search condition)
+                    this.userData.municipality.city = result.selectedObject.name;
+                    this.userData.municipality.postalCode = result.selectedObject.zip;
+
+                    this.userData.municipality.name = '';
+                    this.userData.municipality.addressLine1 = '';
+                    this.userData.municipality.databox = '';
+                }
+            },
+            birthdateSelected: function(result) {
+                // this.userData.birthdate = result;
+            },
+            csDateFormat: function(date) {
+                return moment(date).format('D. M. YYYY');
+            },
+            csDateParse: function(dateString) {
+                return moment(dateString, 'DD-MM-YYYY').toDate();
+            },
+            validate: function(field, data) {
+                if (data === undefined || data === null) return ''
+                if (this.validatiors[field] === undefined) return '';
+                var valid;
+                if (typeof(this.validatiors[field]) === 'function') {
+                    valid = this.validatiors[field](data);
+                } else {
+                    if (this.validatiors[field].pattern === undefined) return '';
+                    valid = this.validatiors[field].pattern.test(data);
+                }
+                return valid ? '' : 'has-error';
+            },
+            generatePreviewfinished: function() {
+                var imageData = this.worker.prop.img.src;
+                document.querySelector('.preview-wrapper img').src = imageData;
+                document.querySelector('#overlay img').src = imageData;
+            },
+            generatePreview: function() {
+                var element = document.getElementById('document-to-print-cr');
+                var opt = {};
+                this.worker = html2pdf().from(element).toImg('datauristring', opt).then(this.generatePreviewfinished);
+            },
+            showOverlay: function() {
+                this.overlayVisible = !this.overlayVisible;
+            },
+            downloadPdf: function() {
+                var element = document.getElementById('document-to-print-cr');
+                html2pdf().from(element).set({
+                    margin: 1,
+                    filename: 'cestne_prohlaseni_covid.pdf',
+                    html2canvas: { scale: 2 },
+                    jsPDF: { orientation: 'portrait', unit: 'in', format: 'letter', compressPDF: true }
+                }).save();
+            },
+            clearForm: function(text, bypass) {
+                if (bypass || confirm(text)) {
+                    this.userData.fullName = null;
+                    this.userData.addressLine1 = null;
+                    this.userData.postalCode = null;
+                    this.userData.city = null;
+                    this.userData.target = null;
+                    this.userData.reason = null;
+                    this.userData.idnumber = null;
+                    this.$refs.autocompleteZIP.clear();
+                }
+            },
+        },
+        components: {
+            vuejsDatepicker: vuejsDatepicker,
+            'autocomplete': this['vuejs-autocomplete']
+        }
+    });
+    </script>
+    <style>
+    #app {
+        background-color: white;
+    }
+
+    .body {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 1170px;
+    }
+
+    .pane {
+        padding: 15px;
+        margin: 0px;
+        position: relative;
+        top: -1em;
+    }
+
+    .pane h2,
+    .pane div.form-group>h2 {
+        font-weight: 600;
+        padding-top: 40px;
+        clear: both;
+    }
+
+    .pane p.new-p {
+        color: #757575;
+        font-size: 18px;
+        font-weight: 300;
+    }
+
+    .pane ul.new-p .emphasized {
+        font-style: normal;
+        line-height: 2em;
+    }
+
+    .pane ul.new-p {
+        color: #38CAAA;
+        font-weight: 300;
+    }
+
+    .pane ul.new-p li span {
+        color: #757575;
+    }
+
+    .header__title strong {
+        color: white;
+        font-weight: normal;
+    }
+
+    .header__title {
+        text-align: center;
+    }
+
+    .header__title span a {
+        font-size: 16px;
+        color: white;
+        text-decoration: none;
+    }
+
+    .header__content .header__title span a:hover,
+    .header__content .header__title span a:active,
+    .header__content .header__title span a:focus {
+        color: #E0E6ED;
+        text-decoration: underline;
+    }
+
+    #navigation {
+        width: 80%;
+        max-width: 1300px;
+        margin-top: 50px;
+        margin-bottom: 50px;
+    }
+
+    #navigation ul {
+        list-style-type: none;
+        list-style-type: none;
+        padding: 0px;
+    }
+
+    #navigation ul li {
+        display: inline-block;
+        text-align: center;
+    }
+
+    #navigation ul a {
+        width: 100%;
+        border: 1px solid white;
+        border-radius: 4px;
+        padding: 20px 30px;
+        margin: 5px 0px;
+        color: white;
+        font-size: 1.2em;
+        display: inline-block;
+    }
+
+    #navigation ul li.active a {
+        background-color: white;
+        color: #0074E4;
+    }
+
+    .form .form-group {
+        margin-bottom: 0px;
+        position: relative;
+    }
+
+    .form .left {
+        position: absolute;
+        left: 0px;
+        top: 30px;
+    }
+
+    .form .left img.idcard {
+        margin-top: 10px;
+    }
+
+    .form h2,
+    .form .right {
+        padding-left: 100px;
+    }
+
+    .form .row {
+        margin-bottom: 20px;
+        color: #757575;
+        font-size: 18px;
+    }
+
+    .form label {
+        font-weight: 300;
+    }
+
+    .form .radios label {
+        font-size: 18px;
+        line-height: 26px;
+        white-space: normal;
+        margin-right: 10px;
+    }
+
+    .form input[type="radio"] {
+        margin-right: 5px;
+        vertical-align: top;
+    }
+
+    .form label.optional {
+        font-size: small;
+        position: absolute;
+        right: 15px;
+    }
+
+    #preview .btn-default,
+    #en-preview .btn-default {
+        margin-left: 5px;
+    }
+
+    #preview p,
+    #en-preview p {
+        color: #757575;
+        font-size: 16px;
+        font-weight: 300;
+    }
+
+    #preview strong,
+    #en-preview strong {
+        color: black;
+    }
+
+    .preview-wrapper {
+        display: block;
+        float: right;
+        box-shadow: 0 2px 20px lightgray;
+        margin-top: -50px;
+        padding: 10px;
+    }
+
+    .preview-wrapper:hover {
+        cursor: pointer;
+        box-shadow: 0 2px 20px lightblue;
+    }
+
+    .preview-wrapper img {
+        width: 100%;
+    }
+
+    #overlay {
+        position: absolute;
+        top: 300px;
+        left: 50%;
+        margin-left: -400px;
+        box-shadow: 0 2px 20px lightgray;
+        padding: 20px;
+        background-color: white;
+    }
+
+    #overlay img {
+        width: 90%;
+        max-width: 800px;
+    }
+
+    #document-template {
+        display: none;
+    }
+
+    .autocomplete__results {
+        width: 150%;
+    }
+
+    .btn-default-new {
+        padding-top: 15px;
+        padding-bottom: 15px;
+        line-height: 24px;
+    }
+
+    .btn-primary-new {
+        margin-right: 20px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        line-height: 24px;
+    }
+
+    .radios {
+        margin: 10px 0px;
+    }
+
+    .radios .button-group {
+        white-space: nowrap;
+    }
+
+    .preview-buttons .btn {
+        margin: 0px 10px;
+    }
+
+    @media (min-width: 1361px) {
+        .menu-fix {
+            display: none;
+        }
+    }
+
+    @media (max-width: 1360px) {
+        .menu-fix {
+            display: block;
+        }
+    }
+
+    @media (max-width: 991px) {
+        .menu-fix {
+            display: none;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .btn-primary-new {
+            margin-right: 0px;
+        }
+
+        .form .left {
+            display: none;
+        }
+
+        .form .right {
+            padding-left: 0px;
+        }
+
+        .form h2 {
+            padding-left: 0px;
+            font-size: 18px;
+            line-height: 18 px;
+        }
+
+        #navigation {
+            width: 100%;
+        }
+
+        .preview-buttons .btn {
+            margin: 5px 0px;
+        }
+
+        .preview-wrapper {
+            margin: 10px 0px;
+        }
+
+        #overlay {
+            top: 600px;
+        }
+
+        #overlay img {
+            max-width: 660px;
+        }
+    }
+
+    @media (max-width: 425px) {
+        #overlay {
+            display: none;
+        }
+
+        .menu-fix {
+            display: block;
+        }
+    }
+
+    .pageA4 {
+        width: 600px;
+        border: 0px;
+        padding: 0px;
+        margin: 0px;
+        position: relative;
+    }
+    </style>
+    <footer>
+        <div class="container">
+            <ul class="list-inline">
+            </ul>
+            <p>footer
+            </p>
+        </div>
+    </footer>
+</body>
+
+</html>

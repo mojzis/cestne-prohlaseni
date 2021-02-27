@@ -1,0 +1,16 @@
+{
+  "name": "cestne-prohlaseni",
+  "version": "0.0.1",
+  "description": "Pro cestu mimo okres",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/"
+  },
+  "homepage": ""
+}
