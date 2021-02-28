@@ -42,6 +42,7 @@
                             Vámi vyplněné osobní údaje nikomu neodesíláme, ani je dále nezpracováváme.
                             Nemusíte se ničeho bát – celá žádost vzniká pouze na vašem počítači.
                             Pokud chcete mít 100% jistotu, můžete se při vytváření prohlášení odpojit od internetu.
+                            Pro Vaše pohodlí ukládáme vyplněná data do Vašeho prohlížeče pro příští použití.
                         </p>
                     </div>
                 </div>
@@ -256,6 +257,15 @@ uvede se jen místo aktuálního pobytu.</p>
                 locality: { pattern: /^.{2,40}$/ },
             }
         },
+        mounted() {
+            if (localStorage.getItem('userData')) {
+                try {
+                    this.userData = JSON.parse(localStorage.getItem('userData'));
+                }catch(e) {
+                    localStorage.removeItem('userData');
+                }
+            }
+        },
         methods: {
             zipSelected: function(result) {
                 this.userData.city = result.selectedObject.name;
@@ -285,6 +295,7 @@ uvede se jen místo aktuálního pobytu.</p>
                 document.querySelector('#overlay img').src = imageData;
             },
             generatePreview: function() {
+                localStorage.setItem('userData',JSON.stringify(this.userData))
                 var element = document.getElementById('document-to-print-cr');
                 var opt = {};
                 this.worker = html2pdf().from(element).toImg('datauristring', opt).then(this.generatePreviewfinished);
