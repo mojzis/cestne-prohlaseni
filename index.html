@@ -14,24 +14,17 @@
     <meta name="Description" content="Pro potřeby cestování za hranice okresu, v souladu s nařízením vlády.">
     <meta property="og:image" content="https://cestne.prohlasuji.cz/assets/images/plukovnik.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.6.5/core.min.js" integrity="sha256-mmU2yAEP5IKCRWRxZEA+e2oGOdfyJGQV+55ZFTLahW8=" crossorigin="anonymous"></script>
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700&amp;subset=latin-ext" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link href="assets/site.css" rel="stylesheet">
-    <link href="assets/globalsite.css" rel="stylesheet">
-    <link href="assets/social-share-kit.css" rel="stylesheet">
-    <link href="assets/hlidac.css" rel="stylesheet">
-    <script src="assets/vuejs-datepicker-patched.min.js"></script>
     <script src="assets/vuejs-auto-complete-0.10.0-min.js"></script>
     <script src="assets/lang-cs.js"></script>
-    <script src="assets/cityzipname.min.js"></script> <!-- cities with zip for zip lookup -->
     <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js" identity="sha384-QliZbpszoo4jiVyo529dYiKgGQySM0I/kSJcvQcVkMXCqiIoEfRQLsvUwVNLcOqP" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.min.js" integrity="sha384-tJs0vlPyuG7XcysSkZ0VtWsM/uztJkUtpLwb6HzV5NSgSwGqdW61IBOBJDhbUf+K" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.2/dist/vue-router.min.js" integrity="sha384-EnzMJi5PirMz1dgUr9a4DUHwg7e71+fxk3jLLfJn1vljGydxX8c6bdDYdPDE8224" crossorigin="anonymous"></script>
     <script src="assets/html2pdf.bundle.min.js"></script>
 </head>
 
-<body class="new-body">
-    <div class="header__navbar">
+<body class="">
+    <div class="header">
         <h1>Čestné prohlášení</h1>
     </div>
     <div id="app">
@@ -72,13 +65,15 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
                                 <label for="reason" class="required">Důvod cesty:</label>
-                                <!-- <input id="reason" v-model="userData.reason" class="form-control" type="text"> -->
                                 <autocomplete :source="allowedReasons" :input-class="'form-control'" 
-                                :show-no-results="false" placeholder="" results-display="r" 
+                                :show-no-results="false" results-display="r" 
                                 results-value="r" results-display-after-item-selected="r" 
-                                search-from-beginning="true" allow-only-values-from-source="false" 
-                                min-legth-for-search-begin="0" min-result-items="13" max-result-items="15" more-results-exists-text="(...upřesněte zadání...)" 
-                                ref="autocompleteReason" @selected="reasonSelected">
+                                :search-from-beginning="false" allow-only-values-from-source="false" 
+                                min-length-for-search-begin="0" min-result-items="13" max-result-items="15"
+                                placeholder="Vyberte si z povolených důvodů cesty" 
+                                ref="autocompleteReason" v-model="userData.reason" >
+                                <!-- @selected="reasonSelected"
+                                @clear="reasonCleared" -->
                                 </autocomplete>
                             </div>
                         </div>
@@ -118,8 +113,7 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-3" :class="validate('postalCode',userData.postalCode)">
                                 <label for="postal-code">PSČ</label>
-                                <autocomplete :source="citiesZipName" :input-class="'form-control'" :show-no-results="false" placeholder="" results-display="zip_name" results-value="zip" results-display-after-item-selected="zip" search-from-beginning="true" allow-only-values-from-source="false" min-legth-for-search-begin="0" max-result-items="15" more-results-exists-text="(...upřesněte zadání...)" ref="autocompleteZIP" @selected="zipSelected">
-                                </autocomplete>
+                                <input id="postal-code" v-model="userData.postalCode" class="form-control" type="text">
                             </div>
                             <div class="col-xs-12 col-sm-7" :class="validate('locality',userData.city)">
                                 <label for="locality">Obec</label>
@@ -219,7 +213,6 @@ uvede se jen místo aktuálního pobytu.</p>
         {r:"cesta do zdravotnických zařízení a zařízení sociálních služeb, včetně zajištění nezbytného doprovodu, nebo do zařízení veterinární péče"},
         {r:"zajištění nezbytných potřeb pro jinou osobu, zajištění péče o děti, zajištění péče o zvířata, odkládání odpadu"},
         {r:"vyřízení neodkladných úředních záležitostí, včetně zajištění nezbytného doprovodu"},
-        {r:"výkon povolání"},
         {r:"zajištění bezpečnosti, vnitřního pořádku a řešení krizové situace"},
         {r:"zajištění ochrany zdraví, poskytování zdravotní nebo sociální péče, včetně dobrovolnické činnosti"},
         {r:"zajištění individuální duchovní péče a služby"},
@@ -237,7 +230,6 @@ uvede se jen místo aktuálního pobytu.</p>
         router: router,
         el: '#app',
         data: {
-            citiesZipName: citiesZipName,
             allowedReasons: allowedReasons,
             cs: window.csLang,
             routes: routes,
@@ -248,14 +240,14 @@ uvede se jen místo aktuálního pobytu.</p>
                 postalCode: null,
                 city: null,
                 idnumber: null,
-                reson: null,
+                reason: null,
                 target: null,
             },
             travelData: {
                 day: currentTime.getDate() + "." + currentTime.getMonth() + "." + currentTime.getFullYear(),
-                time: currentTime.getHours() + ":" + currentTime.getMinutes(),
+                time: currentTime.getHours() + ":" + String(currentTime.getMinutes()).padStart(2,'0'),
             },
-            validatiors: {
+            validators: {
                 fullName: { pattern: /^.{2,}\ .{2,}$/ },
                 line1: { pattern: /^(.*[^0-9]+) (([1-9][0-9]*)\/)?([1-9][0-9]*[a-cA-C]?)$/ },
                 postalCode: { pattern: /^[1-7][0-9]{4}$/ },
@@ -272,10 +264,6 @@ uvede se jen místo aktuálního pobytu.</p>
             }
         },
         methods: {
-            zipSelected: function(result) {
-                this.userData.city = result.selectedObject.name;
-                this.userData.postalCode = result.selectedObject.zip;
-            },
             csDateFormat: function(date) {
                 return moment(date).format('D. M. YYYY');
             },
@@ -284,13 +272,13 @@ uvede se jen místo aktuálního pobytu.</p>
             },
             validate: function(field, data) {
                 if (data === undefined || data === null) return ''
-                if (this.validatiors[field] === undefined) return '';
+                if (this.validators[field] === undefined) return '';
                 var valid;
-                if (typeof(this.validatiors[field]) === 'function') {
-                    valid = this.validatiors[field](data);
+                if (typeof(this.validators[field]) === 'function') {
+                    valid = this.validators[field](data);
                 } else {
-                    if (this.validatiors[field].pattern === undefined) return '';
-                    valid = this.validatiors[field].pattern.test(data);
+                    if (this.validators[field].pattern === undefined) return '';
+                    valid = this.validators[field].pattern.test(data);
                 }
                 return valid ? '' : 'has-error';
             },
@@ -312,7 +300,9 @@ uvede se jen místo aktuálního pobytu.</p>
                 if (typeof result.selectedObject.r !== undefined) {
                     this.userData.reason = result.selectedObject.r
                 }
-                
+            },
+            reasonCleared: function() {
+                this.userData.reason = ''
             },
             downloadPdf: function() {
                 var element = document.getElementById('document-to-print-cr');
@@ -334,12 +324,10 @@ uvede se jen místo aktuálního pobytu.</p>
                     this.userData.idnumber = null;
                     this.travelData.day = null;
                     this.travelData.time = null;
-                    this.$refs.autocompleteZIP.clear();
                 }
             },
         },
         components: {
-            vuejsDatepicker: vuejsDatepicker,
             'autocomplete': this['vuejs-autocomplete']
         }
     });
