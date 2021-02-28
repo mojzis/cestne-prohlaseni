@@ -20,6 +20,10 @@
     <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js" identity="sha384-QliZbpszoo4jiVyo529dYiKgGQySM0I/kSJcvQcVkMXCqiIoEfRQLsvUwVNLcOqP" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.min.js" integrity="sha384-tJs0vlPyuG7XcysSkZ0VtWsM/uztJkUtpLwb6HzV5NSgSwGqdW61IBOBJDhbUf+K" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.2/dist/vue-router.min.js" integrity="sha384-EnzMJi5PirMz1dgUr9a4DUHwg7e71+fxk3jLLfJn1vljGydxX8c6bdDYdPDE8224" crossorigin="anonymous"></script>
+    <!--script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js" type="module"></script-->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+
+    <!--script src="https://cdn.jsdelivr.net/npm/vue-signature-pad@2.0.2/dist/vue-signature-pad.esm.min.js" crossorigin="anonymous" type="module"></script-->
     <script src="assets/html2pdf.bundle.min.js"></script>
 </head>
 
@@ -93,6 +97,22 @@
                             <div class="col-xs-12 col-sm-10">
                                 <label for="time" class="required">Čas cesty:</label>
                                 <input id="time" v-model="travelData.time" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-10">
+                                <label for="signature">Podpis:</label><br>
+                                <Signature signature-for="customerSignature" data-vv-name="customerSignature"  />
+
+<template id="signature-pad-template" width="100%">
+    <div id="signature-pad" class="signature-pad" width="100%">
+    <div class="signature-pad__body" width="100%">
+      <canvas name="signature" id="signature" ref="canvas" width="425" height="250"></canvas>
+    </div>
+    <button type="button" v-on:click="clearSignature()">Smazat</button>
+
+  </div>
+</template>
                             </div>
                         </div>
 
@@ -181,6 +201,7 @@
                     <strong>Podpis:</strong> ……………………………..<br>
                 </p>
                 <p>
+<hr>
 <sup>1</sup>Pokud bylo místo trvalého pobytu nebo bydliště opuštěno před vyhlášením příslušného krizového opatření,
 uvede se jen místo aktuálního pobytu.</p>
             </div>
@@ -200,11 +221,42 @@ uvede se jen místo aktuálního pobytu.</p>
             return { x: 0, y: 0 }
         }
     });
+//var canvas = document.querySelector("canvas");
+//var signaturePad = new SignaturePad(canvas);
     router.beforeEach(function(to, from, next) {
         if (paths.indexOf(to.path) == -1) {
             next({ path: '/form', replace: true });
         } else next();
     })
+Vue.component('Signature', {
+    props: ['signatureFor'],
+    template: '#signature-pad-template',
+  data: () => ({
+	pad: null,
+	signature: null
+  }),
+    mounted() {
+	this.pad = new SignaturePad(this.$refs.canvas)
+	this.pad.name = this.signatureFor
+    },
+    methods: {
+	saveSignature: function() {
+	    this.signature = this.pad.toDataURL()
+	    this.$emit('signed', this.signature)
+	},
+	clearSignature: function() {
+	    this.pad.clear()
+	    this.signature = null
+	    this.$emit('signed', null)
+	},
+	resizeCanvas: function() {
+	    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+      this.$refs.canvas.width = this.$refs.canvas.offsetWidth * ratio
+      this.$refs.canvas.height = this.$refs.canvas.offsetHeight * ratio
+      this.$refs.canvas.getContext('2d').scale(ratio, ratio)
+	}
+    }
+})
     Vue.filter('dateCZ', function(dateString) {
         const date = moment(dateString);
         return date.isValid() ? date.format('D. M. YYYY') : "";
@@ -637,6 +689,9 @@ uvede se jen místo aktuálního pobytu.</p>
         padding: 0px;
         margin: 0px;
         position: relative;
+    }
+    canvas#signature {
+        border: 1px solid;
     }
     </style>
     <footer>
