@@ -15,24 +15,36 @@
     <meta property="og:image" content="https://cestne.prohlasuji.cz/assets/images/plukovnik.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.6.5/core.min.js" integrity="sha256-mmU2yAEP5IKCRWRxZEA+e2oGOdfyJGQV+55ZFTLahW8=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link href="assets/site.css" rel="stylesheet">
+    <link href="assets/globalsite.css" rel="stylesheet">
+    <link href="assets/social-share-kit.css" rel="stylesheet">
+    <link href="assets/hlidac.css" rel="stylesheet">
     <script src="assets/vuejs-auto-complete-0.10.0-min.js"></script>
     <script src="assets/lang-cs.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.24.0/moment.min.js" identity="sha384-QliZbpszoo4jiVyo529dYiKgGQySM0I/kSJcvQcVkMXCqiIoEfRQLsvUwVNLcOqP" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.8/dist/vue.min.js" integrity="sha384-tJs0vlPyuG7XcysSkZ0VtWsM/uztJkUtpLwb6HzV5NSgSwGqdW61IBOBJDhbUf+K" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.2/dist/vue-router.min.js" integrity="sha384-EnzMJi5PirMz1dgUr9a4DUHwg7e71+fxk3jLLfJn1vljGydxX8c6bdDYdPDE8224" crossorigin="anonymous"></script>
-    <!--script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js" type="module"></script-->
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
-
-    <!--script src="https://cdn.jsdelivr.net/npm/vue-signature-pad@2.0.2/dist/vue-signature-pad.esm.min.js" crossorigin="anonymous" type="module"></script-->
     <script src="assets/html2pdf.bundle.min.js"></script>
+    <style>
+        header {
+            align-content: center;
+            padding: 15px 30px 15px 30px;
+        }
+        .new-body {
+            padding-top: 0;
+        }
+    </style>
 </head>
 
-<body class="">
+<body>
     <div class="header">
         <h1>Čestné prohlášení</h1>
     </div>
     <div id="app">
         <div class="body container">
+            <transition v-on:before-leave="saveCanvas" v-on:after-enter="reloadCanvas">
+
             <div id="form" class="form pane table" v-if="$route.path=='/form'">
                 <div class="form-group">
                     <div class="left">
@@ -45,6 +57,24 @@
                             Nemusíte se ničeho bát – celá žádost vzniká pouze na vašem počítači.
                             Pokud chcete mít 100% jistotu, můžete se při vytváření prohlášení odpojit od internetu.
                             Pro Vaše pohodlí ukládáme vyplněná data do Vašeho prohlížeče pro příští použití.
+                        </p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="left">
+                        <img src="assets/images/affidavit.png" width="41" height="50" />
+                    </div>
+                    <h2>Kdy (ne)potřebujete čestné prohlášení</h2>
+                    <div class="right">
+                        <p class="new-p">
+                            Pokud cestujete po území okresu, čestné prohlášení nepotřebujete. Pozor, v některých
+                            případech (například vycházky) nesmíte opustit území své obce.<br><br>
+                            Cestujete-li zpět do místa svého pobytu nebo trvalého bydliště, nepotřebujete písemné
+                            čestné prohlášení. Existence dokladu o bydlišti může usnadnit případnou policejní kontrolu.<br><br>
+                            Chystáte-li se opustit republiku, je třeba čestné prohlášení doplnit dokladem o cíli cesty
+                            (např. letenka, doklad o ubytování).<br><br>
+                            <strong>Čestné prohlášení potřebujete, pokud opouštíte okres. Pozor ovšem, že opustit okres lze
+                            pouze z důvodů výslovně uvedených v nařízení vlády č. 216/2021.</strong>
                         </p>
                     </div>
                 </div>
@@ -69,15 +99,13 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
                                 <label for="reason" class="required">Důvod cesty:</label>
+                                <!-- <input id="reason" v-model="userData.reason" class="form-control" type="text"> -->
                                 <autocomplete :source="allowedReasons" :input-class="'form-control'" 
-                                :show-no-results="false" results-display="r" 
+                                :show-no-results="false" placeholder="" results-display="r" 
                                 results-value="r" results-display-after-item-selected="r" 
-                                :search-from-beginning="false" allow-only-values-from-source="false" 
-                                min-length-for-search-begin="0" min-result-items="13" max-result-items="15"
-                                placeholder="Vyberte si z povolených důvodů cesty" 
-                                ref="autocompleteReason" v-model="userData.reason" >
-                                <!-- @selected="reasonSelected"
-                                @clear="reasonCleared" -->
+                                search-from-beginning="true" allow-only-values-from-source="false" 
+                                min-legth-for-search-begin="0" min-result-items="13" max-result-items="15" more-results-exists-text="(...upřesněte zadání...)" 
+                                ref="autocompleteReason" @selected="reasonSelected">
                                 </autocomplete>
                             </div>
                         </div>
@@ -102,17 +130,15 @@
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
                                 <label for="signature">Podpis:</label><br>
-                                <Signature signature-for="customerSignature" data-vv-name="customerSignature"  />
-
-<template id="signature-pad-template" width="100%">
-    <div id="signature-pad" class="signature-pad" width="100%">
-    <div class="signature-pad__body" width="100%">
-      <canvas name="signature" id="signature" ref="canvas" width="425" height="250"></canvas>
-    </div>
-    <button type="button" v-on:click="clearSignature()">Smazat</button>
-
-  </div>
-</template>
+                                <Signature ref="objSignature" signature-for="customerSignature" data-vv-name="customerSignature"  />
+                                <template id="signature-pad-template" width="100%">
+                                    <div id="signature-pad" class="signature-pad" width="100%">
+                                        <div class="signature-pad__body" width="100%">
+                                            <canvas name="signature" id="signature" ref="canvas" width="425" height="250"></canvas>
+                                        </div>
+                                        <button type="button" v-on:click="clearSignature()">Smazat</button>
+                                    </div>
+                                </template>
                             </div>
                         </div>
 
@@ -147,6 +173,7 @@
                     <button class="btn btn-default btn-default-new col-xs-12 col-sm-4" v-on:click="clearForm('Opravdu si přejete smazat obsah formuláře?', false)">Smazat údaje</button>
                 </div>
             </div>
+            </transition>
             <transition v-on:after-enter="generatePreview">
                 <div id="preview" class="pane" v-if="$route.path=='/preview'">
                     <h2>1. Zkontrolujte prohlášení</h2>
@@ -186,10 +213,10 @@
                     uvádím následující důvod k opuštění místa trvalého pobytu nebo bydliště<sup>1)</sup> v souladu s usnesením vlády č. 216 ze dne 26. února 2021:
                 </p>
                 <p style="padding: 10px 25px 10px 25px; font-style: italic;">
-                    {{userData.reason}}
+                    {{userData.reason}}<br><br>
                 </p>
                 <p>
-                    uvádím, že cestuji do místa:
+                    uvádím, že cestuji do místa
                 </p>
                 <p style="padding: 10px 25px 10px 25px; font-style: italic;">
                     {{userData.target}}
@@ -198,7 +225,8 @@
                     Podepsáno<br>
                     <strong>Den:</strong> {{travelData.day}}<br>
                     <strong>Hodina:</strong> {{travelData.time}}<br><br>
-                    <strong>Podpis:</strong> ……………………………..<br>
+                    <strong>Podpis:</strong><br>
+                    <img id="pdf-signature" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==" /><br>
                 </p>
                 <p>
 <hr>
@@ -221,42 +249,43 @@ uvede se jen místo aktuálního pobytu.</p>
             return { x: 0, y: 0 }
         }
     });
-//var canvas = document.querySelector("canvas");
-//var signaturePad = new SignaturePad(canvas);
     router.beforeEach(function(to, from, next) {
         if (paths.indexOf(to.path) == -1) {
             next({ path: '/form', replace: true });
         } else next();
     })
-Vue.component('Signature', {
-    props: ['signatureFor'],
-    template: '#signature-pad-template',
-  data: () => ({
-	pad: null,
-	signature: null
-  }),
-    mounted() {
-	this.pad = new SignaturePad(this.$refs.canvas)
-	this.pad.name = this.signatureFor
-    },
-    methods: {
-	saveSignature: function() {
-	    this.signature = this.pad.toDataURL()
-	    this.$emit('signed', this.signature)
-	},
-	clearSignature: function() {
-	    this.pad.clear()
-	    this.signature = null
-	    this.$emit('signed', null)
-	},
-	resizeCanvas: function() {
-	    var ratio =  Math.max(window.devicePixelRatio || 1, 1);
-      this.$refs.canvas.width = this.$refs.canvas.offsetWidth * ratio
-      this.$refs.canvas.height = this.$refs.canvas.offsetHeight * ratio
-      this.$refs.canvas.getContext('2d').scale(ratio, ratio)
-	}
-    }
-})
+    var signatureComponent = Vue.component('Signature', {
+        props: ['signatureFor'],
+        template: '#signature-pad-template',
+        data: () => ({
+            pad: null,
+            signature: null
+        }),
+        mounted() {
+            this.pad = new SignaturePad(this.$refs.canvas)
+            this.pad.name = this.signatureFor
+        },
+        methods: {
+            getSignature: function() {
+                return this.pad.toDataURL()
+            },
+            saveSignature: function() {
+                this.signature = this.pad.toDataURL()
+                this.$emit('signed', this.signature)
+            },
+            clearSignature: function() {
+                this.pad.clear()
+                this.signature = null
+                this.$emit('signed', null)
+            },
+            resizeCanvas: function() {
+                var ratio =  Math.max(window.devicePixelRatio || 1, 1);
+                this.$refs.canvas.width = this.$refs.canvas.offsetWidth * ratio
+                this.$refs.canvas.height = this.$refs.canvas.offsetHeight * ratio
+                this.$refs.canvas.getContext('2d').scale(ratio, ratio)
+            }
+        }
+    })
     Vue.filter('dateCZ', function(dateString) {
         const date = moment(dateString);
         return date.isValid() ? date.format('D. M. YYYY') : "";
@@ -265,6 +294,7 @@ Vue.component('Signature', {
         {r:"cesta do zdravotnických zařízení a zařízení sociálních služeb, včetně zajištění nezbytného doprovodu, nebo do zařízení veterinární péče"},
         {r:"zajištění nezbytných potřeb pro jinou osobu, zajištění péče o děti, zajištění péče o zvířata, odkládání odpadu"},
         {r:"vyřízení neodkladných úředních záležitostí, včetně zajištění nezbytného doprovodu"},
+        {r:"výkon povolání"},
         {r:"zajištění bezpečnosti, vnitřního pořádku a řešení krizové situace"},
         {r:"zajištění ochrany zdraví, poskytování zdravotní nebo sociální péče, včetně dobrovolnické činnosti"},
         {r:"zajištění individuální duchovní péče a služby"},
@@ -275,8 +305,9 @@ Vue.component('Signature', {
         {r:"vzdělávání včetně praxe a zkoušek"},
         {r:"účast na hromadné akci"},
         {r:"vycestování z České republiky"},
+        {r:"výkon podnikatelské nebo jiné obdobné činnosti neuvedené výše, a to za tímto konkrétním důvodem, včetně kontaktních údajů (telefonního čísla) objednatele nebo osoby, u které se výše uvedená činnost má vykonat):"},
     ]
-    currentTime= new Date()
+    currentTime = new Date()
     currentTime = new Date(currentTime - 30*60000)
     window.app = new Vue({
         router: router,
@@ -294,10 +325,11 @@ Vue.component('Signature', {
                 idnumber: null,
                 reason: null,
                 target: null,
+                signature: null,
             },
             travelData: {
-                day: currentTime.getDate() + "." + currentTime.getMonth() + "." + currentTime.getFullYear(),
-                time: currentTime.getHours() + ":" + String(currentTime.getMinutes()).padStart(2,'0'),
+                day: currentTime.getDate() + "." + (1 + currentTime.getMonth()) % 12 + "." + currentTime.getFullYear(),
+                time: currentTime.getHours() + ":" + String(currentTime.getMinutes()).padStart(2, '0'),
             },
             validators: {
                 fullName: { pattern: /^.{2,}\ .{2,}$/ },
@@ -314,8 +346,18 @@ Vue.component('Signature', {
                     localStorage.removeItem('userData');
                 }
             }
+            this.reloadCanvas();
         },
         methods: {
+            reloadCanvas: function() {
+            var canvas = document.getElementById('signature');
+            var ctx = canvas.getContext('2d');
+            var img = new Image;
+            img.onload = function(){
+                ctx.drawImage(img,0,0); // Or at whatever offset you like
+            };
+            img.src = this.userData.signature;
+            },
             csDateFormat: function(date) {
                 return moment(date).format('D. M. YYYY');
             },
@@ -339,8 +381,15 @@ Vue.component('Signature', {
                 document.querySelector('.preview-wrapper img').src = imageData;
                 document.querySelector('#overlay img').src = imageData;
             },
+            saveCanvas: function() {
+                var canvas = document.getElementsByTagName('canvas')[0];
+                this.userData.signature = canvas.toDataURL('image/png');
+            },
             generatePreview: function() {
                 localStorage.setItem('userData',JSON.stringify(this.userData))
+                var signature = document.getElementById('pdf-signature');
+                signature.src = this.userData.signature;
+                signature.style.height = '100px';
                 var element = document.getElementById('document-to-print-cr');
                 var opt = {};
                 this.worker = html2pdf().from(element).toImg('datauristring', opt).then(this.generatePreviewfinished);
@@ -354,7 +403,7 @@ Vue.component('Signature', {
                 }
             },
             reasonCleared: function() {
-                this.userData.reason = ''
+                this.userData.reason = '';
             },
             downloadPdf: function() {
                 var element = document.getElementById('document-to-print-cr');
@@ -374,13 +423,16 @@ Vue.component('Signature', {
                     this.userData.target = null;
                     this.userData.reason = null;
                     this.userData.idnumber = null;
+                    this.userData.signature = null;
                     this.travelData.day = null;
                     this.travelData.time = null;
+                    this.$refs.autocompleteZIP.clear();
                 }
             },
         },
         components: {
-            'autocomplete': this['vuejs-autocomplete']
+            'autocomplete': this['vuejs-autocomplete'],
+            'objSignature': signatureComponent
         }
     });
     </script>
