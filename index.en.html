@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <script async defer data-domain="cestne.prohlasuji.cz" src="https://plausible.io/js/plausible.js"></script>
-    <title>Čestné prohlášení - cesta mimo okres</title>
+    <title>Affidavit - travelling outside the region (okres)</title>
     <meta name="twitter:card" content="summary_large_image">
     <meta property="og:title" content="Čestné prohlášení - cesta mimo okres">
     <meta property="og:description" content="Pro potřeby cestování za hranice okresu, v souladu s nařízením vlády.">
@@ -42,10 +42,10 @@
 
 <body>
     <div class="header">
-        <h1>Čestné prohlášení</h1>
+        <h1>Affidavit</h1>
     </div>
     <div class="center">
-        <a href="https://affidavit.cz/">[English version]</a>
+        <a href="https://cestne.prohlasuji.cz/">[Czech version]</a>
     </div>
     <div id="app">
         <div class="body container">
@@ -56,13 +56,13 @@
                     <div class="left">
                         <img src="assets/images/lock.png" width="41" height="50" />
                     </div>
-                    <h2>Soukromí</h2>
+                    <h2>Privacy</h2>
                     <div class="right">
                         <p class="new-p">
-                            Vámi vyplněné osobní údaje nikomu neodesíláme, ani je dále nezpracováváme.
-                            Nemusíte se ničeho bát – celé prohlášení vzniká pouze ve vašem prohlížeči.
-                            Pokud chcete mít 100% jistotu, můžete se při vytváření prohlášení odpojit od internetu.
-                            Pro Vaše pohodlí ukládáme vyplněná data do Vašeho prohlížeče pro příští použití.
+                            The provided personal data are not sent neither further processed by the maintainers of this site.
+                            There's no need to worry – the whole document is created in your browser.
+                            If you need a 100% certainty, you can go offline when filling in the affidavit.
+                            For your convenience we store the provided data in your browser for future visits.
                         </p>
                     </div>
                 </div>
@@ -70,17 +70,18 @@
                     <div class="left">
                         <img src="assets/images/affidavit.png" width="41" height="50" />
                     </div>
-                    <h2>Kdy (ne)potřebujete čestné prohlášení</h2>
+                    <h2>When do(n't) you need the affidavit</h2>
                     <div class="right">
                         <p class="new-p">
-                            Pokud cestujete po území okresu, čestné prohlášení nepotřebujete. Pozor, v některých
-                            případech (například vycházky) nesmíte opustit území své obce.<br><br>
-                            Cestujete-li zpět do místa svého pobytu nebo trvalého bydliště, nepotřebujete písemné
-                            čestné prohlášení. Existence dokladu o bydlišti může usnadnit případnou policejní kontrolu.<br><br>
-                            Chystáte-li se opustit republiku, je třeba čestné prohlášení doplnit dokladem o cíli cesty
-                            (např. letenka, doklad o ubytování).<br><br>
-                            <strong>Čestné prohlášení potřebujete, pokud opouštíte okres. Pozor ovšem, že opustit okres lze
-                            pouze z důvodů výslovně uvedených v nařízení vlády č. 216/2021.</strong>
+                            If you are travelling within the borders of your region (okres), you don't need an
+                            affidavit. Be careful: in some cases (like hiking) you must not leave your municipality.<br><br>
+                            If you travel back to the place of your stay or to the place of your residence, you don't need
+                            an affidavit. Having any proof of living on the address of your stay may ease the discussion
+                            with the police officers.<br><br>
+                            If you are about to leave the country, you need the affdavit as well as any proof of where
+                            you travel to (airplane ticket, proof of accomodation).<br><br>
+                            <strong>You DO need the affidavit should you want to leave the district. This is however only
+                            possible if the leave reason matches at least one of the valid reasons in the government order no. 216/2021.</strong>
                         </p>
                     </div>
                 </div>
@@ -88,29 +89,29 @@
                     <div class="left">
                         <img src="assets/images/id-card.png" width="50" height="38" class="idcard" />
                     </div>
-                    <h2>Moje identita</h2>
+                    <h2>About yourself</h2>
                     <div class="right">
                         <div class="row">
                             <div class="col-xs-12 col-sm-10" :class="validate('fullName',userData.fullName)">
-                                <label for="name" class="required">Jméno a příjmení</label>
+                                <label for="name" class="required">First and last name</label>
                                 <input id="name" v-model="userData.fullName" class="form-control" type="text">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
-                                <label for="idnumber" class="required">Číslo občanského průkazu, příp. cestovního dokladu:</label>
+                                <label for="idnumber" class="required">ID card or passport number:</label>
                                 <input id="idnumber" v-model="userData.idnumber" class="form-control" type="text">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
-                                <label for="reason" class="required">Důvod cesty:</label>
+                                <label for="reason" class="required">Reason to leave the district:</label>
                                 <autocomplete :source="allowedReasons" :input-class="'form-control'" 
                                 :show-no-results="false" results-display="r" 
                                 results-value="r" results-display-after-item-selected="r" 
                                 :search-from-beginning="false" allow-only-values-from-source="false" 
                                 min-length-for-search-begin="0" min-result-items="13" max-result-items="15"
-                                placeholder="Vyberte si z povolených důvodů cesty" 
+                                placeholder="Pick one of the valid reasons" 
                                 ref="autocompleteReason" v-model="userData.reason" >
                                 <!-- @selected="reasonSelected"
                                 @clear="reasonCleared" -->
@@ -119,32 +120,32 @@
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
-                                <label for="target" class="required">Cíl cesty:</label>
+                                <label for="target" class="required">Travel destination:</label>
                                 <input id="target" v-model="userData.target" class="form-control" type="text">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
-                                <label for="day" class="required">Den cesty:</label>
+                                <label for="day" class="required">Date of the travel:</label>
                                 <input id="day" v-model="travelData.day" class="form-control" type="text">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
-                                <label for="time" class="required">Čas cesty:</label>
+                                <label for="time" class="required">Time of the travel:</label>
                                 <input id="time" v-model="travelData.time" class="form-control" type="text">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-10">
-                                <label for="signature">Podpis:</label><br>
+                                <label for="signature">Signature:</label><br>
                                 <Signature ref="objSignature" signature-for="customerSignature" data-vv-name="customerSignature"  />
                                 <template id="signature-pad-template" width="100%">
                                     <div id="signature-pad" class="signature-pad" width="100%">
                                         <div class="signature-pad__body" width="100%">
                                             <canvas name="signature" id="signature" ref="canvas" width="425" height="250"></canvas>
                                         </div>
-                                        <button type="button" v-on:click="clearSignature()">Smazat</button>
+                                        <button type="button" v-on:click="clearSignature()">Clear</button>
                                     </div>
                                 </template>
                             </div>
@@ -156,47 +157,47 @@
                     <div class="left">
                         <img src="assets/images/home.png" width="50" height="40" />
                     </div>
-                    <h2>Moje adresa</h2>
+                    <h2>Address of your stay or permanent residence address</h2>
                     <div class="right">
                         <div class="row">
                             <div class="col-xs-12 col-sm-10" :class="validate('line1',userData.addressLine1)">
-                                <label for="address-line1">Ulice a číslo popisné</label>
+                                <label for="address-line1">Street and house number</label>
                                 <input id="address-line1" v-model="userData.addressLine1" class="form-control" type="text">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-xs-12 col-sm-3" :class="validate('postalCode',userData.postalCode)">
-                                <label for="postal-code">PSČ</label>
+                                <label for="postal-code">ZIP code</label>
                                 <input id="postal-code" v-model="userData.postalCode" class="form-control" type="text">
                             </div>
                             <div class="col-xs-12 col-sm-7" :class="validate('locality',userData.city)">
-                                <label for="locality">Obec</label>
+                                <label for="locality">Municipality</label>
                                 <input id="locality" v-model="userData.city" class="form-control" type="text">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="right row">
-                    <router-link tag="button" to="/preview" class="btn btn-primary btn-primary-new col-xs-12 col-sm-4">Vytvořit prohlášení</router-link>
-                    <button class="btn btn-default btn-default-new col-xs-12 col-sm-4" v-on:click="clearForm('Opravdu si přejete smazat obsah formuláře?', false)">Smazat údaje</button>
+                    <router-link tag="button" to="/preview" class="btn btn-primary btn-primary-new col-xs-12 col-sm-4">Build the affidavit</router-link>
+                    <button class="btn btn-default btn-default-new col-xs-12 col-sm-4" v-on:click="clearForm('Opravdu si přejete smazat obsah formuláře?', false)">Clear the data</button>
                 </div>
             </div>
             </transition>
             <transition v-on:after-enter="generatePreview">
                 <div id="preview" class="pane" v-if="$route.path=='/preview'">
-                    <h2>1. Zkontrolujte prohlášení</h2>
+                    <h2>1. Check the affidavit</h2>
                     <div class="row clearfix">
                         <div class="left col-xs-12 col-sm-6">
-                            <p>Zkontrolujte si údaje v náhledu vygenerovaného prohlášení.</p>
-                            <p>V případě, že se vám náhled nezobrazuje, proveďte kontrolu po stažení.</p>
+                            <p>Check the data in the affidavit preview.</p>
+                            <p>If you don't see the preview, please download the file and validate the data in it.</p>
                         </div>
                         <div class="preview-wrapper col-xs-12 col-sm-5" @click="showOverlay"><img></div>
                         <div class="left col-xs-12 col-sm-6">
-                            <p>Pokud jsou všechny údaje v pořádku, prohlášení si stáhněte.</p>
-                            <p>Pokud není některá z vyplněných informací správná, nic se neděje. Údaje můžete snadno změnit.</p>
+                            <p>If you are happy with the data, download the affidavit.</p>
+                            <p>If there are mistakes, don't worry: you can easily correct the data.</p>
                             <div class="preview-buttons row clearfix">
-                                <button class="btn btn-primary btn-primary-new pull-left col-xs-12 col-sm-5" v-on:click="downloadPdf">Stáhnout <br class="visible-sm-block">prohlášení</button>
-                                <router-link tag="button" to="/form" class="btn btn-default btn-default-new pull-right col-xs-12 col-sm-5">Změnit <br class="visible-sm-block">údaje</router-link>
+                                <button class="btn btn-primary btn-primary-new pull-left col-xs-12 col-sm-5" v-on:click="downloadPdf">Download <br class="visible-sm-block">affidavit</button>
+                                <router-link tag="button" to="/form" class="btn btn-default btn-default-new pull-right col-xs-12 col-sm-5">Correct <br class="visible-sm-block">the data</router-link>
                             </div>
                         </div>
                     </div>
@@ -206,40 +207,48 @@
         <div id="overlay" v-show="overlayVisible" @click="showOverlay"><img></div>
         <div id="document-template">
             <div id="document-to-print-cr" class="pageA4">
-                <p style="text-align: center; font-weight: bold; padding: 40px 5px 15px 5px;">
-                    ČESTNÉ PROHLÁŠENÍ
+                <p style="text-align: center; font-weight: bold; padding: 20px 5px 15px 5px;">
+                    ČESTNÉ PROHLÁŠENÍ – AFFIDAVIT
                 </p>
                 <p style="padding: 5px 5px 5px 0px;">
-                    Já níže podepsaný/á
+                    Já níže podepsaný/á <span style="font-style: italic;">/ By signing below, I,</span>
                 </p>
-                <p style="padding: 5px 5px 10px 25px;">
-                    <strong>Jméno a příjmení:</strong> {{userData.fullName}} <br>
-                    <strong>Adresa:</strong> {{userData.addressLine1 || ''}}<span v-if="userData.addressLine1">, </span>{{(userData.postalCode || '') +' '}}{{userData.city || ''}}<br>
-                    <strong>Číslo občanského průkazu, příp. cestovního dokladu:</strong> {{userData.idnumber}}
+                <p style="padding: 5px 5px 5px 25px;">
+                    <strong>Jméno a příjmení / first and last name:</strong> {{userData.fullName}} <br>
+                    <strong>Adresa / address:</strong> {{userData.addressLine1 || ''}}<span v-if="userData.addressLine1">, </span>{{(userData.postalCode || '') +' '}}{{userData.city || ''}}<br>
+                    <strong>Číslo občanského průkazu, příp. cestovního dokladu:</strong><br>{{userData.idnumber}}
+                    <strong><span style="font-style: itallic">ID card and/or passport number:</span></strong><br>{{userData.idnumber}}
                 </p>
                 <p>
                     uvádím následující důvod k opuštění místa trvalého pobytu nebo bydliště<sup>1)</sup> v souladu s usnesením vlády č. 216 ze dne 26. února 2021:
                 </p>
-                <p style="padding: 10px 25px 10px 25px; font-style: italic;">
+                <p style="padding: 5px 25px 5px 25px; font-style: italic;">
+                    {{userData.reasonCZ}}<br><br>
+                </p>
+                <p style="font-style: italic;">
+                    hereby state the following reason to leave the place of stay or permanent residence<sup>1)</sup> according to the government order no. 216 dated 26. February 2021:
+                </p>
+                <p style="padding: 5px 25px 5px 25px; font-style: italic;">
                     {{userData.reason}}<br><br>
                 </p>
                 <p>
-                    uvádím, že cestuji do místa
+                    uvádím, že cestuji do místa <span style="font-style: italic;">/ and state that I travel to</span>
                 </p>
-                <p style="padding: 10px 25px 10px 25px; font-style: italic;">
+                <p style="padding: 5px 25px 5px 25px; font-style: italic;">
                     {{userData.target}}
                 </p>
-                <p style="padding: 20px 5px 10px 0px;">
-                    Podepsáno<br>
-                    <strong>Den:</strong> {{travelData.day}}<br>
-                    <strong>Hodina:</strong> {{travelData.time}}<br><br>
-                    <strong>Podpis:</strong><br>
+                <p style="padding: 10px 5px 5px 0px;">
+                    Podepsáno <span style="font-style: italic">/ Signed:</span><br>
+                    <strong>Den / date:</strong> {{travelData.day}}<br>
+                    <strong>Hodina / hour:</strong> {{travelData.time}}<br><br>
+                    <strong>Podpis / signature:</strong><br>
                     <img id="pdf-signature" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z/C/HgAGgwJ/lK3Q6wAAAABJRU5ErkJggg==" /><br>
                 </p>
                 <p>
 <hr>
 <sup>1</sup>Pokud bylo místo trvalého pobytu nebo bydliště opuštěno před vyhlášením příslušného krizového opatření,
-uvede se jen místo aktuálního pobytu.</p>
+uvede se jen místo aktuálního pobytu. / If the place of permanent residence or stay was left before publishing of
+the government order, state the place of the current stay.</p>
             </div>
         </div>
     </div>
@@ -299,6 +308,22 @@ uvede se jen místo aktuálního pobytu.</p>
         return date.isValid() ? date.format('D. M. YYYY') : "";
     });
     const allowedReasons=[
+        {r:"travel to medical and/or social services institutions, including necessary accompaniment, or to a veterinary care institution"},
+        {r:"securing the essential needs of another person, securing the child care, animal care, waste disposal"},
+        {r:"urgent official matters, including necessary accompaniment"},
+        {r:"excercise of the profession"},
+        {r:"ensuring security, internal affairs and resolution of a crisis situation"},
+        {r:"securing health services, offering health and/or social care, including volunteering"},
+        {r:"securing spiritual care and service"},
+        {r:"securing public transportation and other public infrastructure"},
+        {r:"securing services for the residents, including supply services and delivery services"},
+        {r:"securing veterinary care"},
+        {r:"attending a funeral"},
+        {r:"education including practice and exams"},
+        {r:"attending an allowed public event"},
+        {r:"leaving the Czech republic"},
+    ]
+    const allowedReasonsCZ=[
         {r:"cesta do zdravotnických zařízení a zařízení sociálních služeb, včetně zajištění nezbytného doprovodu, nebo do zařízení veterinární péče"},
         {r:"zajištění nezbytných potřeb pro jinou osobu, zajištění péče o děti, zajištění péče o zvířata, odkládání odpadu"},
         {r:"vyřízení neodkladných úředních záležitostí, včetně zajištění nezbytného doprovodu"},
@@ -313,7 +338,6 @@ uvede se jen místo aktuálního pobytu.</p>
         {r:"vzdělávání včetně praxe a zkoušek"},
         {r:"účast na povolené hromadné akci"},
         {r:"vycestování z České republiky"},
-        {r:"výkon podnikatelské nebo jiné obdobné činnosti neuvedené výše, a to za tímto konkrétním důvodem, včetně kontaktních údajů (telefonního čísla) objednatele nebo osoby, u které se výše uvedená činnost má vykonat):"},
     ]
     currentTime = new Date()
     currentTime = new Date(currentTime - 30*60000)
@@ -322,6 +346,7 @@ uvede se jen místo aktuálního pobytu.</p>
         el: '#app',
         data: {
             allowedReasons: allowedReasons,
+            allowedReasonsCZ: allowedReasonsCZ,
             cs: window.csLang,
             routes: routes,
             overlayVisible: false,
@@ -332,6 +357,7 @@ uvede se jen místo aktuálního pobytu.</p>
                 city: null,
                 idnumber: null,
                 reason: null,
+                reasonCZ: null,
                 target: null,
                 signature: null,
             },
@@ -394,6 +420,12 @@ uvede se jen místo aktuálního pobytu.</p>
                 this.userData.signature = canvas.toDataURL('image/png');
             },
             generatePreview: function() {
+                for (i = 0; i < this.allowedReasons.length; i++) {
+                    if (this.allowedReasons[i].r == this.userData.reason) {
+                        this.userData.reasonCZ = this.allowedReasonsCZ[i].r;
+                        break;
+                    }
+                }
                 localStorage.setItem('userData',JSON.stringify(this.userData))
                 var signature = document.getElementById('pdf-signature');
                 signature.src = this.userData.signature;
@@ -409,6 +441,9 @@ uvede se jen místo aktuálního pobytu.</p>
                 if (typeof result.selectedObject.r !== undefined) {
                     this.userData.reason = result.selectedObject.r
                 }
+            },
+            reasonTranslate: function(value) {
+                return value;
             },
             reasonCleared: function() {
                 this.userData.reason = '';
@@ -758,8 +793,8 @@ uvede se jen místo aktuálního pobytu.</p>
         <div class="container">
             <ul class="list-inline">
             </ul>
-            <p>S láskou od <a href="https://twitter.com/zajdee">@zajdee</a> a <a href="https://twitter.com/mojzis">@mojzis</a>, s využitím <a href="https://volby.hlidacstatu.cz/">Voličského lístku</a> od Hlídače Státu.
-                V souladu s <a href="https://apps.odok.cz/attachment/-/down/IHOABYLUPWWU">usnesením vlády č. 216</a> ze dne 26. února 2021 a vzory tamtéž.  <a href="https://github.com/mojzis/cestne-prohlaseni">Nápady a vylepšení posílejte na GitHub!</a>
+            <p>With love from <a href="https://twitter.com/zajdee">@zajdee</a> and <a href="https://twitter.com/mojzis">@mojzis</a>, based on <a href="https://volby.hlidacstatu.cz/">Voter's permit</a> from <a href="https://hlidacstatu.cz/">Hlídač Státu</a>.
+                According to the <a href="https://apps.odok.cz/attachment/-/down/IHOABYLUPWWU">government order no. 216</a> dated 26 February 2021 and the government affidavit samples. <a href="https://github.com/mojzis/cestne-prohlaseni">Submit improvements on GitHub!</a>
             </p>
         </div>
     </footer>
